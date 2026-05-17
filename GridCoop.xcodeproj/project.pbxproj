@@ -8,11 +8,41 @@
 
 /* Begin PBXBuildFile section */
 		8F5678B82F9BA3A800E0B023 /* codemagic.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 8F5678B72F9BA3A400E0B023 /* codemagic.yaml */; };
+		8F6A62562FB9F54A000CE08A /* AdjustSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 8F6A62552FB9F54A000CE08A /* AdjustSdk */; };
+		8F6A62592FB9F569000CE08A /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F6A62582FB9F569000CE08A /* FirebaseCore */; };
+		8F6A625B2FB9F569000CE08A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8F6A625A2FB9F569000CE08A /* FirebaseMessaging */; };
+		8F6A626B2FB9F852000CE08A /* GridiPushes.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8F6A62642FB9F852000CE08A /* GridiPushes.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8F6A62732FB9F85D000CE08A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 8F6A62722FB9F85D000CE08A /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8F6A62692FB9F852000CE08A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F6782B92F8BCA0000BA1736 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F6A62632FB9F852000CE08A;
+			remoteInfo = GridiPushes;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8F6A62702FB9F852000CE08A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8F6A626B2FB9F852000CE08A /* GridiPushes.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		8F5678B72F9BA3A400E0B023 /* codemagic.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = codemagic.yaml; sourceTree = "<group>"; };
 		8F6782C12F8BCA0000BA1736 /* GridCoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridCoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F6A62642FB9F852000CE08A /* GridiPushes.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GridiPushes.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -22,6 +52,13 @@
 				Info.plist,
 			);
 			target = 8F6782C02F8BCA0000BA1736 /* GridCoop */;
+		};
+		8F6A626F2FB9F852000CE08A /* Exceptions for "GridiPushes" folder in "GridiPushes" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8F6A62632FB9F852000CE08A /* GridiPushes */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -34,6 +71,14 @@
 			path = GridCoop;
 			sourceTree = "<group>";
 		};
+		8F6A62652FB9F852000CE08A /* GridiPushes */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F6A626F2FB9F852000CE08A /* Exceptions for "GridiPushes" folder in "GridiPushes" target */,
+			);
+			path = GridiPushes;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +86,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F6A625B2FB9F569000CE08A /* FirebaseMessaging in Frameworks */,
+				8F6A62592FB9F569000CE08A /* FirebaseCore in Frameworks */,
+				8F6A62562FB9F54A000CE08A /* AdjustSdk in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F6A62612FB9F852000CE08A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F6A62732FB9F85D000CE08A /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +108,8 @@
 			children = (
 				8F5678B72F9BA3A400E0B023 /* codemagic.yaml */,
 				8F6782C32F8BCA0000BA1736 /* GridCoop */,
+				8F6A62652FB9F852000CE08A /* GridiPushes */,
+				8F6A62712FB9F85D000CE08A /* Frameworks */,
 				8F6782C22F8BCA0000BA1736 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,8 +118,16 @@
 			isa = PBXGroup;
 			children = (
 				8F6782C12F8BCA0000BA1736 /* GridCoop.app */,
+				8F6A62642FB9F852000CE08A /* GridiPushes.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8F6A62712FB9F85D000CE08A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,20 +140,48 @@
 				8F6782BD2F8BCA0000BA1736 /* Sources */,
 				8F6782BE2F8BCA0000BA1736 /* Frameworks */,
 				8F6782BF2F8BCA0000BA1736 /* Resources */,
+				8F6A62702FB9F852000CE08A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8F6A626A2FB9F852000CE08A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8F6782C32F8BCA0000BA1736 /* GridCoop */,
 			);
 			name = GridCoop;
 			packageProductDependencies = (
+				8F6A62552FB9F54A000CE08A /* AdjustSdk */,
+				8F6A62582FB9F569000CE08A /* FirebaseCore */,
+				8F6A625A2FB9F569000CE08A /* FirebaseMessaging */,
 			);
 			productName = GridCoop;
 			productReference = 8F6782C12F8BCA0000BA1736 /* GridCoop.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8F6A62632FB9F852000CE08A /* GridiPushes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F6A626C2FB9F852000CE08A /* Build configuration list for PBXNativeTarget "GridiPushes" */;
+			buildPhases = (
+				8F6A62602FB9F852000CE08A /* Sources */,
+				8F6A62612FB9F852000CE08A /* Frameworks */,
+				8F6A62622FB9F852000CE08A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8F6A62652FB9F852000CE08A /* GridiPushes */,
+			);
+			name = GridiPushes;
+			packageProductDependencies = (
+				8F6A62722FB9F85D000CE08A /* FirebaseMessaging */,
+			);
+			productName = GridiPushes;
+			productReference = 8F6A62642FB9F852000CE08A /* GridiPushes.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -103,6 +197,9 @@
 						CreatedOnToolsVersion = 16.4;
 						LastSwiftMigration = 1640;
 					};
+					8F6A62632FB9F852000CE08A = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 8F6782BC2F8BCA0000BA1736 /* Build configuration list for PBXProject "GridCoop" */;
@@ -114,12 +211,17 @@
 			);
 			mainGroup = 8F6782B82F8BCA0000BA1736;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8F6A62542FB9F54A000CE08A /* XCRemoteSwiftPackageReference "ios_sdk" */,
+				8F6A62572FB9F569000CE08A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8F6782C22F8BCA0000BA1736 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				8F6782C02F8BCA0000BA1736 /* GridCoop */,
+				8F6A62632FB9F852000CE08A /* GridiPushes */,
 			);
 		};
 /* End PBXProject section */
@@ -133,6 +235,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8F6A62622FB9F852000CE08A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -143,7 +252,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8F6A62602FB9F852000CE08A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8F6A626A2FB9F852000CE08A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F6A62632FB9F852000CE08A /* GridiPushes */;
+			targetProxy = 8F6A62692FB9F852000CE08A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8F6782CB2F8BCA0200BA1736 /* Debug */ = {
@@ -274,6 +398,7 @@
 				INFOPLIST_FILE = GridCoop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Grid Coop";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need permission to use this feature.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Grid Coop uses tracking data to better understand how the app is used, improve overall performance, personalize content and features, and provide a smoother user experience. Tracking may also help us measure the effectiveness of app functionality and maintain app security and reliability.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -288,7 +413,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cppoosgrid.GridCoop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -317,6 +442,7 @@
 				INFOPLIST_FILE = GridCoop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Grid Coop";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need permission to use this feature.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Grid Coop uses tracking data to better understand how the app is used, improve overall performance, personalize content and features, and provide a smoother user experience. Tracking may also help us measure the effectiveness of app functionality and maintain app security and reliability.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -331,7 +457,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.3;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cppoosgrid.GridCoop;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -342,6 +468,67 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.5;
+			};
+			name = Release;
+		};
+		8F6A626D2FB9F852000CE08A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GridiPushes/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GridiPushes;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cppoosgrid.GridCoop.GridiPushes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F6A626E2FB9F852000CE08A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GridiPushes/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GridiPushes;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cppoosgrid.GridCoop.GridiPushes;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -366,7 +553,58 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8F6A626C2FB9F852000CE08A /* Build configuration list for PBXNativeTarget "GridiPushes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F6A626D2FB9F852000CE08A /* Debug */,
+				8F6A626E2FB9F852000CE08A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		8F6A62542FB9F54A000CE08A /* XCRemoteSwiftPackageReference "ios_sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adjust/ios_sdk";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		8F6A62572FB9F569000CE08A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.13.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8F6A62552FB9F54A000CE08A /* AdjustSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F6A62542FB9F54A000CE08A /* XCRemoteSwiftPackageReference "ios_sdk" */;
+			productName = AdjustSdk;
+		};
+		8F6A62582FB9F569000CE08A /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F6A62572FB9F569000CE08A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		8F6A625A2FB9F569000CE08A /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F6A62572FB9F569000CE08A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		8F6A62722FB9F85D000CE08A /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F6A62572FB9F569000CE08A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8F6782B92F8BCA0000BA1736 /* Project object */;
 }

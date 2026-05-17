@@ -8,21 +8,12 @@ class AppState: ObservableObject {
     @AppStorage("appTheme") var appTheme: String = "dark" {
         didSet { objectWillChange.send() }
     }
-    @Published var showSplash: Bool = true
     
     var colorScheme: ColorScheme? {
         switch appTheme {
         case "light": return .light
         case "dark": return .dark
         default: return nil
-        }
-    }
-    
-    init() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-                self.showSplash = false
-            }
         }
     }
     
@@ -492,5 +483,159 @@ class NotificationManager: ObservableObject {
     func updateDailyTip() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["dailyTip"])
         if dailyTipEnabled && notificationsEnabled { scheduleDailyTip() }
+    }
+}
+
+@MainActor
+final class GridCoopViewModel: ObservableObject {
+    
+    @Published var navigateToMain = false {
+        didSet {
+            if navigateToMain {
+                deadlineTask?.cancel()
+                cachedDataTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+    
+    @Published var navigateToWeb = false {
+        didSet {
+            if navigateToWeb {
+                deadlineTask?.cancel()
+                cachedDataTask?.cancel()
+                uiLocked = true
+            }
+        }
+    }
+    
+    @Published var showPermissionPrompt = false
+    @Published var showOfflineView = false
+    
+    private let engine: PipelineEngine
+    private var cancellables = Set<AnyCancellable>()
+    private var deadlineTask: Task<Void, Never>?
+    private var cachedDataTask: Task<Void, Never>?
+    private var attObserver: NSObjectProtocol?
+    
+    private var uiLocked = false
+    private var adjustAttributionReceived = false
+    
+    init() {
+        self.engine = PipelineEngine(env: .live)
+        wireUp()
+    }
+    
+    deinit {
+        deadlineTask?.cancel()
+        cachedDataTask?.cancel()
+        if let obs = attObserver {
+            NotificationCenter.default.removeObserver(obs)
+        }
+    }
+    
+    private func wireUp() {
+        engine.outcomePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] outcome in
+                self?.handleOutcome(outcome)
+            }
+            .store(in: &cancellables)
+    }
+    
+    func boot() {
+        engine.warmUp()
+        armDeadline()
+        
+        attObserver = NotificationCenter.default.addObserver(
+            forName: .init("ATTConsentDone"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self, !self.uiLocked else { return }
+            self.armCachedDataFallback()
+        }
+    }
+    
+    func ingestAttribution(_ data: [String: Any]) {
+        adjustAttributionReceived = true
+        cachedDataTask?.cancel()
+        cachedDataTask = nil
+        
+        Task {
+            engine.ingestCrops(data)
+            await engine.cultivate()
+        }
+    }
+    
+    func ingestDeeplinks(_ data: [String: Any]) {
+        engine.ingestFurrows(data)
+    }
+    
+    func acceptConsent() {
+        Task {
+            await engine.acceptConsent()
+            showPermissionPrompt = false
+        }
+    }
+    
+    func skipConsent() {
+        engine.deferConsent()
+        showPermissionPrompt = false
+    }
+    
+    func networkConnectivityChanged(_ connected: Bool) {
+        showOfflineView = !connected
+    }
+    
+    private func handleOutcome(_ outcome: CoopOutcome) {
+        guard !uiLocked else {
+            return
+        }
+        
+        switch outcome {
+        case .dormant:        break
+        case .requestConsent: showPermissionPrompt = true
+        case .enterBarn:      navigateToWeb = true
+        case .retreatToYard:  navigateToMain = true
+        }
+    }
+    
+    // MARK: - Cached Data Fallback
+    
+    private func armCachedDataFallback() {
+        guard !adjustAttributionReceived else {
+            return
+        }
+        
+        guard engine.state.cropsReady else {
+            return
+        }
+        
+        cachedDataTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            
+            guard let self else { return }
+            guard !Task.isCancelled else { return }
+            guard !self.uiLocked else { return }
+            guard !self.adjustAttributionReceived else { return }
+            
+            let cached = self.engine.state.crops
+            
+            NotificationCenter.default.post(
+                name: .init("ConversionDataReceived"),
+                object: nil,
+                userInfo: ["conversionData": cached]
+            )
+        }
+    }
+    
+    private func armDeadline() {
+        deadlineTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 30_000_000_000)
+            guard let self else { return }
+            let shouldFire = self.engine.reportFenceCollapsed()
+            if shouldFire { self.handleOutcome(.retreatToYard) }
+        }
     }
 }

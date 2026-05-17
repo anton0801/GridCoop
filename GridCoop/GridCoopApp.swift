@@ -1,7 +1,6 @@
 import SwiftUI
 import UserNotifications
 
-// MARK: - App Entry Point
 @main
 struct GridCoopApp: App {
     @StateObject private var appState = AppState()
@@ -9,14 +8,15 @@ struct GridCoopApp: App {
     @StateObject private var projectStore = ProjectStore()
     @StateObject private var environmentStore = EnvironmentStore()
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
-            RootView()
+            SplashView()
                 .environmentObject(appState)
                 .environmentObject(authViewModel)
                 .environmentObject(projectStore)
                 .environmentObject(environmentStore)
-                .preferredColorScheme(appState.colorScheme)
         }
     }
 }
@@ -28,9 +28,7 @@ struct RootView: View {
     
     var body: some View {
         Group {
-            if appState.showSplash {
-                SplashView()
-            } else if !appState.hasCompletedOnboarding {
+            if !appState.hasCompletedOnboarding {
                 OnboardingView()
             } else if !authViewModel.isLoggedIn {
                 AuthView()
@@ -38,8 +36,8 @@ struct RootView: View {
                 MainTabView()
             }
         }
-        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: appState.showSplash)
         .animation(.spring(response: 0.5, dampingFraction: 0.8), value: appState.hasCompletedOnboarding)
         .animation(.spring(response: 0.5, dampingFraction: 0.8), value: authViewModel.isLoggedIn)
+        .preferredColorScheme(appState.colorScheme)
     }
 }

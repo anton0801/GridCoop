@@ -1,343 +1,416 @@
 import SwiftUI
 
-// MARK: - Splash View
-struct SplashView: View {
-    @State private var scale: CGFloat = 0.4
-    @State private var opacity: Double = 0
-    @State private var rotation: Double = -15
-    @State private var subtitleOpacity: Double = 0
-    @State private var particlesVisible = false
-    @State private var glowRadius: CGFloat = 0
-    
-    var body: some View {
-        ZStack {
-            Color.bgPrimary.ignoresSafeArea()
-            
-            // Particles
-            if particlesVisible {
-                ForEach(0..<12, id: \.self) { i in
-                    Circle()
-                        .fill(i % 3 == 0 ? Color.sunYellow : i % 3 == 1 ? Color.woodMid : Color.natureDark)
-                        .frame(width: CGFloat.random(in: 3...8))
-                        .offset(
-                            x: CGFloat.random(in: -160...160),
-                            y: CGFloat.random(in: -160...160)
-                        )
-                        .opacity(0.6)
-                        .animation(.easeOut(duration: 2.0).delay(Double(i) * 0.1), value: particlesVisible)
-                }
-            }
-            
-            VStack(spacing: 20) {
-                ZStack {
-                    // Glow
-                    Circle()
-                        .fill(Color.woodMid.opacity(0.15))
-                        .frame(width: 140 + glowRadius, height: 140 + glowRadius)
-                        .blur(radius: 20)
-                    
-                    // Logo background
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .fill(LinearGradient.woodGradient)
-                        .frame(width: 110, height: 110)
-                        .shadow(color: Color.woodDark.opacity(0.5), radius: 20)
-                    
-                    // Grid lines inside logo
-                    VStack(spacing: 14) {
-                        ForEach(0..<3, id: \.self) { _ in
-                            HStack(spacing: 14) {
-                                ForEach(0..<3, id: \.self) { _ in
-                                    RoundedRectangle(cornerRadius: 3)
-                                        .fill(Color.white.opacity(0.2))
-                                        .frame(width: 20, height: 20)
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Chicken emoji overlay
-                    Text("🐔")
-                        .font(.system(size: 44))
-                        .offset(x: 2, y: 2)
-                }
-                .scaleEffect(scale)
-                .rotationEffect(.degrees(rotation))
-                .shadow(color: Color.woodMid.opacity(0.4), radius: glowRadius / 2)
-                
-                VStack(spacing: 8) {
-                    Text("Grid Coop")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                    
-                    Text("Smart Poultry Planning")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(Color.woodLight.opacity(0.8))
-                        .tracking(2)
-                }
-                .opacity(subtitleOpacity)
-            }
-        }
-        .onAppear {
-            withAnimation(.spring(response: 0.7, dampingFraction: 0.6)) {
-                scale = 1.0
-                rotation = 0
-            }
-            withAnimation(.easeIn(duration: 0.5).delay(0.3)) {
-                opacity = 1
-            }
-            withAnimation(.easeIn(duration: 0.6).delay(0.5)) {
-                subtitleOpacity = 1
-            }
-            withAnimation(.easeInOut(duration: 1.5).delay(0.4)) {
-                glowRadius = 40
-            }
-            withAnimation(.easeIn(duration: 0.3).delay(0.8)) {
-                particlesVisible = true
-            }
-        }
-    }
-}
-
 // MARK: - Onboarding
 struct OnboardingView: View {
     @EnvironmentObject var appState: AppState
     @State private var currentPage = 0
-    @State private var dragOffset: CGFloat = 0
-    
-    let pages: [OnboardingPage] = [
-        OnboardingPage(
-            title: "Design Your Coop",
-            subtitle: "Drag and drop elements onto a smart grid to plan your perfect poultry space.",
-            icon: "square.grid.3x3.fill",
-            accentColor: .woodLight,
-            gradientColors: [Color.woodDark, Color.woodLight],
-            interactiveHint: "Tap the grid cells below"
-        ),
-        OnboardingPage(
-            title: "Optimize Space",
-            subtitle: "Smart calculators ensure every bird has enough room, ventilation, and light.",
-            icon: "chart.bar.fill",
-            accentColor: .techBlue,
-            gradientColors: [Color.techBlue, Color(hex: "#5B4BFF")],
-            interactiveHint: "Watch the indicators"
-        ),
-        OnboardingPage(
-            title: "Improve Conditions",
-            subtitle: "Get real-time recommendations based on your climate, flock size, and goals.",
-            icon: "sparkles",
-            accentColor: .sunYellow,
-            gradientColors: [Color.sunYellow, Color(hex: "#FF9F5A")],
-            interactiveHint: "Swipe to continue"
-        )
-    ]
-    
+ 
     var body: some View {
         ZStack {
-            Color.bgPrimary.ignoresSafeArea()
-            
+            Color(hex: "#111118").ignoresSafeArea()
+ 
             VStack(spacing: 0) {
-                // Skip
                 HStack {
+                    HStack(spacing: 6) {
+                        ForEach(0..<3, id: \.self) { i in
+                            Capsule()
+                                .fill(currentPage == i ? Color(hex: "#C08A5A") : Color.white.opacity(0.15))
+                                .frame(width: currentPage == i ? 28 : 8, height: 8)
+                                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
+                        }
+                    }
                     Spacer()
                     Button("Skip") {
-                        appState.completeOnboarding()
+                        withAnimation(.easeInOut(duration: 0.3)) { appState.completeOnboarding() }
                     }
-                    .foregroundColor(.white.opacity(0.5))
-                    .font(.system(size: 15, weight: .medium))
-                    .padding()
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.4))
+                    .padding(.horizontal, 14).padding(.vertical, 7)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(Capsule())
                 }
-                
-                // Pages
+                .padding(.horizontal, 24).padding(.top, 56).padding(.bottom, 24)
+ 
                 TabView(selection: $currentPage) {
-                    ForEach(Array(pages.enumerated()), id: \.offset) { idx, page in
-                        OnboardingPageView(page: page, isActive: currentPage == idx)
-                            .tag(idx)
-                    }
+                    OnboardingPage1().tag(0)
+                    OnboardingPage2().tag(1)
+                    OnboardingPage3().tag(2)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: currentPage)
-                
-                // Dots
-                HStack(spacing: 8) {
-                    ForEach(0..<pages.count, id: \.self) { i in
-                        Capsule()
-                            .fill(currentPage == i ? Color.sunYellow : Color.white.opacity(0.3))
-                            .frame(width: currentPage == i ? 24 : 8, height: 8)
-                            .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
-                    }
-                }
-                .padding(.bottom, 24)
-                
-                // Button
+ 
                 Button {
-                    if currentPage < pages.count - 1 {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            currentPage += 1
-                        }
+                    if currentPage < 2 {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { currentPage += 1 }
                     } else {
-                        appState.completeOnboarding()
+                        withAnimation(.easeInOut(duration: 0.3)) { appState.completeOnboarding() }
                     }
                 } label: {
-                    HStack(spacing: 12) {
-                        Text(currentPage < pages.count - 1 ? "Next" : "Get Started")
-                            .font(.system(size: 17, weight: .bold))
-                        Image(systemName: currentPage < pages.count - 1 ? "arrow.right" : "checkmark")
-                            .font(.system(size: 16, weight: .bold))
+                    ZStack {
+                        LinearGradient(
+                            colors: currentPage < 2
+                                ? [Color(hex: "#C08A5A"), Color(hex: "#A47148")]
+                                : [Color(hex: "#FFC933"), Color(hex: "#FF9F5A")],
+                            startPoint: .topLeading, endPoint: .bottomTrailing
+                        )
+                        HStack(spacing: 12) {
+                            Text(currentPage < 2 ? "Continue" : "Start Planning")
+                                .font(.system(size: 17, weight: .bold))
+                            Image(systemName: currentPage < 2 ? "arrow.right" : "checkmark")
+                                .font(.system(size: 15, weight: .bold))
+                        }
+                        .foregroundColor(currentPage < 2 ? .white : Color(hex: "#111118"))
                     }
-                    .foregroundColor(.bgPrimary)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(LinearGradient.accentGradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .shadow(color: Color.sunYellow.opacity(0.4), radius: 12)
+                    .frame(height: 56).frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .shadow(
+                        color: currentPage < 2 ? Color(hex: "#A47148").opacity(0.4) : Color(hex: "#FFC933").opacity(0.4),
+                        radius: 16, x: 0, y: 6
+                    )
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 48)
+                .padding(.horizontal, 24).padding(.bottom, 48)
+                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentPage)
             }
         }
     }
 }
-
-struct OnboardingPage {
-    let title: String
-    let subtitle: String
-    let icon: String
-    let accentColor: Color
-    let gradientColors: [Color]
-    let interactiveHint: String
-}
-
-struct OnboardingPageView: View {
-    let page: OnboardingPage
-    let isActive: Bool
-    @State private var iconScale: CGFloat = 0.8
-    @State private var gridCells: [Bool] = Array(repeating: false, count: 9)
-    @State private var scoreValue: Double = 0
-    @State private var bubbleScale: [CGFloat] = [1, 1, 1]
-    
+ 
+// MARK: - Onboarding Page 1: Build Your Coop
+struct OnboardingPage1: View {
+    @State private var filledCells: Set<Int> = []
+    @State private var cellEmojis: [Int: String] = [:]
+    @State private var appeared = false
+    @State private var titleOpacity: Double = 0
+    @State private var titleOffset: CGFloat = 30
+    @State private var hintPulse = false
+ 
+    let cols = 5, rows = 4
+    let cellSize: CGFloat = 52, gap: CGFloat = 7
+    let birds = ["🐔", "🐓", "🐣"]
+    let elems = ["🪺", "🍽️", "🌬️", "💡"]
+ 
     var body: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 0) {
             Spacer()
-            
-            // Illustration
+ 
             ZStack {
-                // Background circle
-                Circle()
-                    .fill(LinearGradient(colors: page.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.15))
-                    .frame(width: 220, height: 220)
-                
-                Circle()
-                    .stroke(LinearGradient(colors: page.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1.5)
-                    .frame(width: 220, height: 220)
-                    .opacity(0.4)
-                
-                // Page-specific interactive illustration
-                if page.icon == "square.grid.3x3.fill" {
-                    // Grid illustration
-                    VStack(spacing: 6) {
-                        ForEach(0..<3) { row in
-                            HStack(spacing: 6) {
-                                ForEach(0..<3) { col in
-                                    let idx = row * 3 + col
-                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                        .fill(gridCells[idx] ? Color.sunYellow : Color.cardBg)
-                                        .frame(width: 44, height: 44)
-                                        .overlay(
-                                            Text(gridCells[idx] ? "🪺" : "")
-                                                .font(.system(size: 20))
-                                        )
-                                        .scaleEffect(gridCells[idx] ? 1.1 : 1.0)
-                                        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: gridCells[idx])
-                                        .onTapGesture {
-                                            gridCells[idx].toggle()
+                Ellipse()
+                    .fill(RadialGradient(colors: [Color(hex: "#2A1E0E").opacity(0.9), .clear], center: .center, startRadius: 40, endRadius: 180))
+                    .frame(width: 360, height: 280).blur(radius: 20)
+ 
+                VStack(spacing: 0) {
+                    // Hint chip
+                    HStack(spacing: 6) {
+                        Circle().fill(Color(hex: "#FFC933")).frame(width: 6, height: 6)
+                            .scaleEffect(hintPulse ? 1.4 : 1.0)
+                            .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: hintPulse)
+                        Text("Tap cells to place your flock")
+                            .font(.system(size: 12, weight: .semibold)).foregroundColor(Color(hex: "#FFC933"))
+                    }
+                    .padding(.horizontal, 14).padding(.vertical, 7)
+                    .background(Color(hex: "#FFC933").opacity(0.12)).clipShape(Capsule())
+                    .padding(.bottom, 16)
+                    .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : -10)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.6), value: appeared)
+ 
+                    // Grid
+                    VStack(spacing: gap) {
+                        ForEach(0..<rows, id: \.self) { row in
+                            HStack(spacing: gap) {
+                                ForEach(0..<cols, id: \.self) { col in
+                                    let idx = row * cols + col
+                                    let filled = filledCells.contains(idx)
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                            .fill(filled ? Color(hex: "#2A1E0E") : Color(hex: "#1A1810").opacity(0.8))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                                    .stroke(filled ? Color(hex: "#C08A5A").opacity(0.6) : Color(hex: "#3A3020").opacity(0.5),
+                                                            lineWidth: filled ? 1.5 : 1)
+                                            )
+                                        if let e = cellEmojis[idx] {
+                                            Text(e).font(.system(size: 24))
+                                                .transition(.asymmetric(
+                                                    insertion: .scale(scale: 0.1).combined(with: .opacity),
+                                                    removal: .scale(scale: 0.5).combined(with: .opacity)
+                                                )).id(e + "\(idx)")
+                                        } else if filled {
+                                            Circle().fill(Color(hex: "#C08A5A").opacity(0.3)).frame(width: 10, height: 10)
                                         }
+                                    }
+                                    .frame(width: cellSize, height: cellSize)
+                                    .scaleEffect(appeared ? 1.0 : 0.7)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.65).delay(Double(row * cols + col) * 0.025), value: appeared)
+                                    .onTapGesture {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.55)) {
+                                            if filledCells.contains(idx) {
+                                                filledCells.remove(idx); cellEmojis.removeValue(forKey: idx)
+                                            } else {
+                                                filledCells.insert(idx)
+                                                cellEmojis[idx] = Int.random(in: 0...3) < 2 ? birds.randomElement()! : elems.randomElement()!
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                } else if page.icon == "chart.bar.fill" {
-                    // Score illustration
-                    VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .stroke(Color.cardBg, lineWidth: 8)
-                                .frame(width: 100, height: 100)
-                            Circle()
-                                .trim(from: 0, to: scoreValue / 100)
-                                .stroke(LinearGradient(colors: page.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing), style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                                .frame(width: 100, height: 100)
-                                .rotationEffect(.degrees(-90))
-                                .animation(.spring(response: 1.2, dampingFraction: 0.7), value: scoreValue)
-                            Text("\(Int(scoreValue))%")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                        }
-                        HStack(spacing: 20) {
-                            ForEach(0..<3) { i in
-                                VStack(spacing: 4) {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(page.gradientColors[0])
-                                        .frame(width: 28, height: CGFloat([30, 50, 40][i]) * (scoreValue / 100))
-                                        .animation(.spring(response: 1.0, dampingFraction: 0.7).delay(Double(i) * 0.15), value: scoreValue)
-                                }
-                                .frame(height: 60, alignment: .bottom)
-                            }
-                        }
-                    }
-                    .onAppear {
-                        if isActive {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                scoreValue = 78
-                            }
-                        }
-                    }
-                } else {
-                    // Tips illustration
-                    VStack(spacing: 10) {
-                        ForEach(["💡 Add nest boxes", "💨 Improve airflow", "🌿 More space needed"], id: \.self) { tip in
-                            HStack(spacing: 10) {
-                                Text(tip)
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(Color.cardBg)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                Spacer()
-                            }
-                            .padding(.horizontal, 20)
-                        }
-                    }
                 }
             }
-            .scaleEffect(iconScale)
-            .onAppear {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                    iconScale = 1.0
-                }
-            }
-            
+            .frame(height: 320)
+ 
+            Spacer().frame(height: 36)
+ 
             VStack(spacing: 12) {
-                Text(page.title)
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                
-                Text(page.subtitle)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(.white.opacity(0.65))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .padding(.horizontal, 32)
+                Text("Design Your Coop")
+                    .font(.system(size: 30, weight: .bold, design: .rounded)).foregroundColor(.white)
+                Text("Tap the grid to place birds, nests, feeders and more — then let our calculators optimize every square metre.")
+                    .font(.system(size: 15)).foregroundColor(.white.opacity(0.5))
+                    .multilineTextAlignment(.center).lineSpacing(5).padding(.horizontal, 32)
             }
-            
-            Text(page.interactiveHint)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(page.accentColor.opacity(0.8))
-                .tracking(1)
-            
+            .offset(y: titleOffset).opacity(titleOpacity)
+ 
             Spacer()
         }
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.1)) {
+                appeared = true; titleOffset = 0; titleOpacity = 1
+            }
+            hintPulse = true
+            let demo: [(Int, String)] = [(0,"🪺"),(1,"🪺"),(5,"🐔"),(6,"🐓"),(10,"🍽️"),(12,"🐣"),(16,"🌬️")]
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                for (i, (idx, emoji)) in demo.enumerated() {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.07) {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+                            filledCells.insert(idx); cellEmojis[idx] = emoji
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+ 
+// MARK: - Onboarding Page 2: Optimize Space
+struct OnboardingPage2: View {
+    @State private var appeared = false
+    @State private var spaceScore: CGFloat = 0
+    @State private var ventScore: CGFloat = 0
+    @State private var lightScore: CGFloat = 0
+    @State private var birdCount: CGFloat = 0
+    @State private var floatPhase: CGFloat = 0
+ 
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+ 
+            ZStack {
+                Ellipse()
+                    .fill(RadialGradient(colors: [Color(hex: "#0D1E2E").opacity(0.9), .clear], center: .center, startRadius: 40, endRadius: 180))
+                    .frame(width: 360, height: 300).blur(radius: 20)
+ 
+                VStack(spacing: 20) {
+                    // Ring gauge
+                    ZStack {
+                        Circle().stroke(Color(hex: "#1E2D3D"), lineWidth: 1).frame(width: 160, height: 160)
+                        Circle().stroke(Color(hex: "#1A2030"), lineWidth: 14).frame(width: 130, height: 130)
+                        Circle()
+                            .trim(from: 0, to: spaceScore)
+                            .stroke(
+                                LinearGradient(colors: [Color(hex: "#4CAF50"), Color(hex: "#6BCB77")], startPoint: .topLeading, endPoint: .bottomTrailing),
+                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                            )
+                            .frame(width: 130, height: 130).rotationEffect(.degrees(-90))
+                            .animation(.spring(response: 1.4, dampingFraction: 0.7).delay(0.2), value: spaceScore)
+                        VStack(spacing: 2) {
+                            Text("🐔").font(.system(size: 28)).offset(y: sin(floatPhase) * 3)
+                            Text("\(Int(birdCount))").font(.system(size: 26, weight: .bold, design: .rounded)).foregroundColor(.white)
+                                .contentTransition(.numericText())
+                            Text("birds").font(.system(size: 11, weight: .medium)).foregroundColor(.white.opacity(0.4))
+                        }
+                        ForEach(0..<12, id: \.self) { i in
+                            Rectangle().fill(Color.white.opacity(0.08))
+                                .frame(width: 1, height: i % 3 == 0 ? 8 : 4)
+                                .offset(y: -80).rotationEffect(.degrees(Double(i) * 30))
+                        }
+                    }
+                    .frame(width: 160, height: 160)
+ 
+                    VStack(spacing: 10) {
+                        OBMetricBar(label: "Space", value: spaceScore, color: Color(hex: "#4CAF50"), icon: "arrow.up.left.and.arrow.down.right", delay: 0.3)
+                        OBMetricBar(label: "Ventilation", value: ventScore, color: Color(hex: "#4DA6FF"), icon: "wind", delay: 0.5)
+                        OBMetricBar(label: "Light", value: lightScore, color: Color(hex: "#FFC933"), icon: "sun.max.fill", delay: 0.7)
+                    }
+                    .padding(.horizontal, 24)
+                }
+            }
+            .frame(height: 340)
+ 
+            Spacer().frame(height: 28)
+ 
+            VStack(spacing: 12) {
+                Text("Optimize Every Metre")
+                    .font(.system(size: 30, weight: .bold, design: .rounded)).foregroundColor(.white)
+                    .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.15), value: appeared)
+                Text("Real-time calculators track space, airflow, and lighting so every bird lives in optimal conditions.")
+                    .font(.system(size: 15)).foregroundColor(.white.opacity(0.5))
+                    .multilineTextAlignment(.center).lineSpacing(5).padding(.horizontal, 32)
+                    .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.25), value: appeared)
+            }
+            Spacer()
+        }
+        .onAppear {
+            appeared = true
+            withAnimation(.spring(response: 1.4, dampingFraction: 0.7).delay(0.3)) { spaceScore = 0.82 }
+            withAnimation(.spring(response: 1.4, dampingFraction: 0.7).delay(0.5)) { ventScore = 0.67 }
+            withAnimation(.spring(response: 1.4, dampingFraction: 0.7).delay(0.7)) { lightScore = 0.91 }
+            withAnimation(.spring(response: 1.2, dampingFraction: 0.7).delay(0.3)) { birdCount = 24 }
+        }
+        .onReceive(Timer.publish(every: 0.016, on: .main, in: .common).autoconnect()) { _ in floatPhase += 0.03 }
+    }
+}
+ 
+struct OBMetricBar: View {
+    let label: String
+    let value: CGFloat
+    let color: Color
+    let icon: String
+    let delay: Double
+    @State private var animated: CGFloat = 0
+ 
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon).font(.system(size: 12, weight: .semibold)).foregroundColor(color).frame(width: 16)
+            Text(label).font(.system(size: 13, weight: .medium)).foregroundColor(.white.opacity(0.6)).frame(width: 72, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4).fill(Color.white.opacity(0.06))
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(LinearGradient(colors: [color.opacity(0.7), color], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: geo.size.width * animated)
+                        .animation(.spring(response: 1.2, dampingFraction: 0.7).delay(delay), value: animated)
+                }
+            }
+            .frame(height: 8).clipShape(RoundedRectangle(cornerRadius: 4))
+            Text("\(Int(animated * 100))%")
+                .font(.system(size: 12, weight: .bold, design: .rounded)).foregroundColor(color)
+                .frame(width: 34, alignment: .trailing).contentTransition(.numericText())
+        }
+        .onAppear {
+            withAnimation(.spring(response: 1.2, dampingFraction: 0.7).delay(delay)) { animated = value }
+        }
+    }
+}
+ 
+// MARK: - Onboarding Page 3: Smart Tips
+struct OnboardingPage3: View {
+    @State private var appeared = false
+    @State private var cardOffsets: [CGFloat] = [60, 60, 60]
+    @State private var cardOpacities: [Double] = [0, 0, 0]
+    @State private var checkedItems: Set<Int> = []
+    @State private var glowPhase: CGFloat = 0
+ 
+    let tips: [(emoji: String, title: String, desc: String, color: Color)] = [
+        ("🪺", "Add Nest Boxes", "1 box per 4–5 hens reduces egg-floor laying by 90%", Color(hex: "#C08A5A")),
+        ("🌬️", "Improve Airflow", "Target 0.3 m³/min per bird to prevent respiratory disease", Color(hex: "#4DA6FF")),
+        ("🌿", "Expand the Space", "Birds need ≥0.37 m² indoors. More space = happier flock.", Color(hex: "#4CAF50")),
+    ]
+ 
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+ 
+            ZStack {
+                Ellipse()
+                    .fill(RadialGradient(colors: [Color(hex: "#1A2E1A").opacity(0.8), .clear], center: .center, startRadius: 20, endRadius: 180))
+                    .frame(width: 360, height: 300).blur(radius: 24)
+ 
+                VStack(spacing: 12) {
+                    ForEach(Array(tips.enumerated()), id: \.offset) { i, tip in
+                        OBTipCard(emoji: tip.emoji, title: tip.title, desc: tip.desc, color: tip.color,
+                                  isChecked: checkedItems.contains(i), glowPhase: glowPhase)
+                            .offset(y: cardOffsets[i]).opacity(cardOpacities[i])
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.65)) {
+                                    if checkedItems.contains(i) {
+                                        checkedItems.remove(i)
+                                    } else {
+                                        checkedItems.insert(i)
+                                    }
+                                }
+                            }
+                    }
+                }
+                .padding(.horizontal, 24)
+            }
+            .frame(height: 320)
+ 
+            Spacer().frame(height: 28)
+ 
+            VStack(spacing: 12) {
+                Text("Smart Suggestions")
+                    .font(.system(size: 30, weight: .bold, design: .rounded)).foregroundColor(.white)
+                    .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.4), value: appeared)
+                Text("Grid Coop analyses your setup and surfaces actionable tips — tap any suggestion to mark it done.")
+                    .font(.system(size: 15)).foregroundColor(.white.opacity(0.5))
+                    .multilineTextAlignment(.center).lineSpacing(5).padding(.horizontal, 32)
+                    .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.5), value: appeared)
+            }
+            Spacer()
+        }
+        .onAppear {
+            appeared = true
+            for i in 0..<3 {
+                withAnimation(.spring(response: 0.55, dampingFraction: 0.7).delay(Double(i) * 0.14 + 0.1)) {
+                    cardOffsets[i] = 0; cardOpacities[i] = 1
+                }
+            }
+        }
+        .onReceive(Timer.publish(every: 0.016, on: .main, in: .common).autoconnect()) { _ in glowPhase += 0.02 }
+    }
+}
+ 
+struct OBTipCard: View {
+    let emoji, title, desc: String
+    let color: Color
+    let isChecked: Bool
+    let glowPhase: CGFloat
+ 
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle().fill(color.opacity(0.15)).frame(width: 44, height: 44)
+                    .shadow(color: isChecked ? color.opacity(0.4 + 0.15 * Double(sin(glowPhase))) : .clear, radius: 10)
+                Text(emoji).font(.system(size: 22))
+                    .scaleEffect(isChecked ? 1.15 : 1.0)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.6), value: isChecked)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.white)
+                Text(desc).font(.system(size: 12)).foregroundColor(.white.opacity(0.5)).lineLimit(2)
+            }
+            Spacer()
+            ZStack {
+                Circle().stroke(isChecked ? color : Color.white.opacity(0.15), lineWidth: 1.5).frame(width: 24, height: 24)
+                if isChecked {
+                    Circle().fill(color).frame(width: 24, height: 24).transition(.scale(scale: 0.2).combined(with: .opacity))
+                    Image(systemName: "checkmark").font(.system(size: 11, weight: .bold)).foregroundColor(.white).transition(.opacity)
+                }
+            }
+            .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isChecked)
+        }
+        .padding(.horizontal, 16).padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(hex: "#1C1A14"))
+                .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(isChecked ? color.opacity(0.45) : Color.white.opacity(0.06), lineWidth: 1.5))
+                .shadow(color: isChecked ? color.opacity(0.15) : .clear, radius: 12, x: 0, y: 4)
+        )
     }
 }
 

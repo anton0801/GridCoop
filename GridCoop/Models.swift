@@ -230,6 +230,49 @@ struct LayoutElement: Identifiable, Codable, Equatable {
     }
 }
 
+struct CoopBundle {
+    let crops: [String: String]
+    let furrows: [String: String]
+    let barnURL: String?
+    let barnMode: String?
+    let untilled: Bool
+    let consentSown: Bool
+    let consentFallow: Bool
+    let consentTilledAt: Date?
+}
+
+enum CoopOutcome {
+    case dormant
+    case requestConsent
+    case enterBarn
+    case retreatToYard
+}
+
+enum CoopError: Error, CustomStringConvertible {
+    case emptyCrops
+    case barnRefused(httpCode: Int)
+    case voltageWilted
+    case dataSpoiled(at: String)
+    case wireWithered(attempt: Int)
+    case rateChoked(retryAfter: TimeInterval)
+    case fenceCollapsed
+    case bridgeCracked(label: String)
+    
+    var description: String {
+        switch self {
+        case .emptyCrops:               return "emptyCrops"
+        case .barnRefused(let code):    return "barnRefused: HTTP \(code)"
+        case .voltageWilted:            return "voltageWilted"
+        case .dataSpoiled(let at):      return "dataSpoiled at \(at)"
+        case .wireWithered(let attempt): return "wireWithered attempt \(attempt)"
+        case .rateChoked(let after):    return "rateChoked: retry after \(after)s"
+        case .fenceCollapsed:           return "fenceCollapsed"
+        case .bridgeCracked(let label): return "bridgeCracked: \(label)"
+        }
+    }
+    
+    var shortLabel: String { description }
+}
 // MARK: - Project
 struct CoopProject: Identifiable, Codable {
     var id = UUID()
@@ -570,4 +613,27 @@ struct CoopSuggestion: Identifiable {
         case hygiene = "Hygiene"
         case comfort = "Comfort"
     }
+}
+
+struct CoopSchema {
+    static let table       = "gc_keyvalue"
+    static let columnKey   = "k"
+    static let columnValue = "v"
+    
+    static let kCrops           = "crops"
+    static let kFurrows         = "furrows"
+    static let kBarnURL         = "barn_url"
+    static let kBarnMode        = "barn_mode"
+    static let kTilled          = "tilled"
+    static let kConsentSown     = "consent_sown"
+    static let kConsentFallow   = "consent_fallow"
+    static let kConsentTilledAt = "consent_tilled_at"
+}
+
+struct CoopLegacy {
+    static let pushURL         = "temp_url"
+    static let fcm             = "fcm_token"
+    static let push            = "push_token"
+    static let barnURLDefaults = "gc_barn_url"
+    static let tilledDefaults  = "gc_tilled"
 }
