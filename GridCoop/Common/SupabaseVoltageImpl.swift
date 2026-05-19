@@ -48,7 +48,6 @@ final class HTTPBarnLocatorImpl {
         
         var body: [String: Any] = seed
         body["os"] = "iOS"
-        // Adjust device ID вместо AppsFlyer UID
         body["adjust_id"] = await Adjust.adid() ?? ""
         body["bundle_id"] = Bundle.main.bundleIdentifier ?? ""
         body["firebase_project_id"] = FirebaseApp.app()?.options.gcmSenderID

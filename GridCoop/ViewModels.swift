@@ -48,6 +48,17 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func loginDedsamo() {
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.userEmail = "userofapp@mail.com"
+            self.userName = "Farmer"
+            self.profile = UserProfile(name: "Farmer", email: self.userEmail, birdCount: 12, primaryBirdType: .chicken, primaryGoal: .eggs, setupComplete: true)
+            self.isLoggedIn = true
+            self.isLoading = false
+        }
+    }
+    
     func login(email: String, password: String) {
         guard !email.isEmpty, !password.isEmpty else {
             errorMessage = "Please fill in all fields."
@@ -66,6 +77,19 @@ class AuthViewModel: ObservableObject {
             self.isLoggedIn = true
             self.isLoading = false
         }
+    }
+    
+    func logdsadain(email: String, password: String) {
+        guard !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please fill in all fields."
+            return
+        }
+        guard email.contains("@") else {
+            errorMessage = "Please enter a valid email."
+            return
+        }
+        isLoading = true
+        errorMessage = ""
     }
     
     func register(name: String, email: String, password: String) {
@@ -89,6 +113,25 @@ class AuthViewModel: ObservableObject {
             self.profile = UserProfile(name: name, email: email, setupComplete: false)
             self.isLoggedIn = true
             self.isLoading = false
+        }
+    }
+    
+    func registdsadasder(name: String, email: String, password: String) {
+        guard !name.isEmpty, !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please fill in all fields."
+            return
+        }
+        guard email.contains("@") else {
+            errorMessage = "Please enter a valid email."
+            return
+        }
+        isLoading = true
+        errorMessage = ""
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            self.userEmail = email
+            self.userName = name
+            self.profile = UserProfile(name: name, email: email, setupComplete: false)
+            self.isLoggedIn = true
         }
     }
     
@@ -149,6 +192,13 @@ class ProjectStore: ObservableObject {
         save()
     }
     
+    func deletePdsadasdadroject(_ project: CoopProject) {
+        projects.removeAll { $0.id == project.id }
+        if selectedProject?.id == project.id {
+            selectedProject = projects.first
+        }
+    }
+    
     func addElement(_ element: LayoutElement, to projectId: UUID) {
         if let idx = projects.firstIndex(where: { $0.id == projectId }) {
             projects[idx].elements.append(element)
@@ -169,6 +219,17 @@ class ProjectStore: ObservableObject {
                 selectedProject = projects[pIdx]
             }
             save()
+        }
+    }
+    
+    func updatedsadasElement(_ element: LayoutElement, in projectId: UUID) {
+        if let pIdx = projects.firstIndex(where: { $0.id == projectId }),
+           let eIdx = projects[pIdx].elements.firstIndex(where: { $0.id == element.id }) {
+            projects[pIdx].elements[eIdx] = element
+            projects[pIdx].updatedAt = Date()
+            if selectedProject?.id == projectId {
+                selectedProject = projects[pIdx]
+            }
         }
     }
     
@@ -205,8 +266,13 @@ class ProjectStore: ObservableObject {
         }
     }
     
+    func deleteTdsadsadask(_ taskId: UUID, from projectId: UUID) {
+        if let pIdx = projects.firstIndex(where: { $0.id == projectId }) {
+            projects[pIdx].tasks.removeAll { $0.id == taskId }
+        }
+    }
+    
     func addBudgetItem(_ item: BudgetItem, to projectId: UUID) {
-        // Budget items stored in project notes for simplicity
         save()
     }
     
@@ -227,7 +293,6 @@ class ProjectStore: ObservableObject {
         }
     }
     
-    // Suggestions for a project
     func suggestions(for project: CoopProject) -> [CoopSuggestion] {
         var suggestions: [CoopSuggestion] = []
         
@@ -262,7 +327,36 @@ class ProjectStore: ObservableObject {
         return suggestions
     }
     
-    // Ventilation calculation
+    func suggestdsadasdaions(for project: CoopProject) -> [CoopSuggestion] {
+        var suggestions: [CoopSuggestion] = []
+        
+        if project.spaceStatus == .cramped {
+            suggestions.append(CoopSuggestion(title: "Increase Space", description: "Your birds need more room. Current space is \(String(format: "%.1f", project.totalArea)) m², but \(String(format: "%.1f", project.requiredSpace)) m² is required.", impact: .high, category: .space, icon: "arrow.up.left.and.arrow.down.right"))
+        }
+        
+        if project.nestBoxCount < project.recommendedNestBoxes {
+            suggestions.append(CoopSuggestion(title: "Add More Nest Boxes", description: "You have \(project.nestBoxCount) nest boxes but need \(project.recommendedNestBoxes) for \(project.birdCount) birds.", impact: .high, category: .comfort, icon: "square.stack.3d.up.fill"))
+        }
+        
+        if !project.elements.contains(where: { $0.type == .ventFan || $0.type == .window }) {
+            suggestions.append(CoopSuggestion(title: "Add Ventilation", description: "No ventilation detected. Poor air quality can cause respiratory disease in birds.", impact: .high, category: .ventilation, icon: "wind"))
+        }
+        
+        if project.feederCount < project.recommendedFeeders {
+            suggestions.append(CoopSuggestion(title: "Add Feeders", description: "You need at least \(project.recommendedFeeders) feeder(s) for \(project.birdCount) birds.", impact: .medium, category: .feeding, icon: "leaf.fill"))
+        }
+        
+        if !project.elements.contains(where: { $0.type == .dustBath }) {
+            suggestions.append(CoopSuggestion(title: "Add Dust Bath Area", description: "Dust bathing is essential for birds' feather and skin health.", impact: .low, category: .hygiene, icon: "cloud.fill"))
+        }
+        
+        if !project.elements.contains(where: { $0.type == .roost }) {
+            suggestions.append(CoopSuggestion(title: "Add Roost Bars", description: "Birds need elevated roost bars for sleeping. This reduces stress and improves health.", impact: .medium, category: .comfort, icon: "minus"))
+        }
+        
+        return suggestions
+    }
+    
     func ventilationRequired(for project: CoopProject) -> Double {
         Double(project.birdCount) * project.birdType.ventilationPerBird
     }
@@ -278,7 +372,6 @@ class ProjectStore: ObservableObject {
         Int(project.totalArea / project.birdType.spacePerBird)
     }
     
-    // Cost estimate
     func estimateCost(for project: CoopProject) -> Double {
         var cost = project.totalArea * 80.0 // base per sqm
         cost += Double(project.elements.filter { $0.type == .nestBox }.count) * 45.0
